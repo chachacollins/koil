@@ -1,7 +1,16 @@
 #include <raylib.h>
+#include <stdio.h>
 #include <math.h>
 #include <stdlib.h>
 #include <time.h>
+
+#ifdef TEAPOT
+#include "assets/utahTeapot.c"
+#elif defined(CUP)
+#include "assets/tsodinCupLowPoly.c"
+#else
+#include "assets/cube.c"
+#endif
 
 #define BACKGROUND  0x181818FF
 #define FOREGROUND  0x18FF18FF
@@ -50,9 +59,9 @@ void draw_point(Vector2 pos)
     DrawRectangleV(dpos, size, GetColor(FOREGROUND));
 }
 
-void draw_line(Vector2 p1, Vector2 p2, float hue)
+void draw_line(Vector2 p1, Vector2 p2)
 {
-    DrawLineV(p1, p2, ColorFromHSV(hue, 1, 1));
+    DrawLineV(p1, p2, RAYWHITE);
 }
 
 int main(void)
@@ -60,45 +69,25 @@ int main(void)
     srand(time(0));
     const int screen_width  = 800;
     const int screen_height = 800;
-    Vector3 pos[] = {
-        {0.25, 0.25, 0.25},
-        {-0.25, 0.25, 0.25},
-        {-0.25, -0.25, 0.25},
-        {0.25, -0.25, 0.25},
-        {0.25, 0.25, -0.25 },
-        {-0.25, 0.25, -0.25 },
-        {-0.25,-0.25, -0.25 },
-        { 0.25,-0.25, -0.25 },
-    };
-    int fs[][2] = {
-        {0, 1}, {1, 2}, {2, 3}, {3, 0},
-        {4, 5}, {5, 6}, {6, 7}, {7, 4},
-        {0, 4}, {1, 5}, {2, 6}, {3, 7},
-    };
-    float dz = 1;
+    float dz = 5;
     float angle = 0;
-    float hue = 0;
     InitWindow(screen_width, screen_height, "KOIL");
     SetTargetFPS(60);
     while(!WindowShouldClose())
     {
         BeginDrawing();
+        DrawText(TextFormat("CURRENT FPS: %i", (int)(1.0f/GetFrameTime())), GetScreenWidth() - 220, 40, 20, GetColor(FOREGROUND));
         ClearBackground(GetColor(BACKGROUND));
         angle += PI*GetFrameTime();
-        // dz += 1*GetFrameTime();
-        hue = sin(angle) * 360;
-        // for(int i = 0; i < ARRAY_SIZE(pos); ++i)
-        //     draw_point(screen(project(translate_z(rotate_xz(pos[i], angle), dz))));
-        for(int i = 0; i < ARRAY_SIZE(fs); ++i)
+        for(int i = 0; i < ARRAY_SIZE(faces); ++i)
         {
-            for(int j = 0; j < ARRAY_SIZE(fs[i]); j++) 
+            for(int j = 0; j < ARRAY_SIZE(faces[i]); j++) 
             {
-                const Vector3 b = pos[fs[i][1]];
-                const Vector3 a = pos[fs[i][0]];
+                const Vector3 b = vertices[faces[i][1]];
+                const Vector3 a = vertices[faces[i][0]];
                 draw_line(
-                    screen(project(translate_z(rotate_xz(a, angle), dz))),
-                    screen(project(translate_z(rotate_xz(b, angle), dz))),
-                    hue
+                        screen(project(translate_z(rotate_xz(a, angle), dz))),
+                        screen(project(translate_z(rotate_xz(b, angle), dz)))
                 );
             }
         }
