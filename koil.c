@@ -1,6 +1,7 @@
-#include <stdio.h>
 #include <raylib.h>
 #include <math.h>
+#include <stdlib.h>
+#include <time.h>
 
 #define BACKGROUND  0x181818FF
 #define FOREGROUND  0x18FF18FF
@@ -36,9 +37,9 @@ Vector3 rotate_xz(Vector3 pos, float angle)
     const float c = cos(angle);
     const float s = sin(angle);
     return (Vector3) {
-        x: pos.x * c - pos.z * s,
-        y: pos.y,
-        z: pos.x * s + pos.z * c,
+        .x = pos.x * c - pos.z * s,
+        .y =  pos.y,
+        .z = pos.x * s + pos.z * c,
     };
 }
 
@@ -49,13 +50,14 @@ void draw_point(Vector2 pos)
     DrawRectangleV(dpos, size, GetColor(FOREGROUND));
 }
 
-void draw_line(Vector2 p1, Vector2 p2)
+void draw_line(Vector2 p1, Vector2 p2, float hue)
 {
-    DrawLineV(p1,p2,GetColor(FOREGROUND));
+    DrawLineV(p1, p2, ColorFromHSV(hue, 1, 1));
 }
 
 int main(void)
 {
+    srand(time(0));
     const int screen_width  = 800;
     const int screen_height = 800;
     Vector3 pos[] = {
@@ -75,6 +77,7 @@ int main(void)
     };
     float dz = 1;
     float angle = 0;
+    float hue = 0;
     InitWindow(screen_width, screen_height, "KOIL");
     SetTargetFPS(60);
     while(!WindowShouldClose())
@@ -82,17 +85,20 @@ int main(void)
         BeginDrawing();
         ClearBackground(GetColor(BACKGROUND));
         angle += PI*GetFrameTime();
+        // dz += 1*GetFrameTime();
+        hue = sin(angle) * 360;
         // for(int i = 0; i < ARRAY_SIZE(pos); ++i)
         //     draw_point(screen(project(translate_z(rotate_xz(pos[i], angle), dz))));
         for(int i = 0; i < ARRAY_SIZE(fs); ++i)
         {
             for(int j = 0; j < ARRAY_SIZE(fs[i]); j++) 
             {
-                const Vector3 a = pos[fs[i][0]];
                 const Vector3 b = pos[fs[i][1]];
+                const Vector3 a = pos[fs[i][0]];
                 draw_line(
                     screen(project(translate_z(rotate_xz(a, angle), dz))),
-                    screen(project(translate_z(rotate_xz(b, angle), dz)))
+                    screen(project(translate_z(rotate_xz(b, angle), dz))),
+                    hue
                 );
             }
         }
