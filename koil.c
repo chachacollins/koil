@@ -8,6 +8,8 @@
 #include "assets/utahTeapot.c"
 #elif defined(CUP)
 #include "assets/tsodinCupLowPoly.c"
+#elif defined(PENGER)
+#include "assets/penger.c"
 #else
 #include "assets/cube.c"
 #endif
@@ -69,7 +71,7 @@ int main(void)
     srand(time(0));
     const int screen_width  = 800;
     const int screen_height = 800;
-    float dz = 5;
+    float dz = 4;
     float angle = 0;
     InitWindow(screen_width, screen_height, "KOIL");
     SetTargetFPS(60);
