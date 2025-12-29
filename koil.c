@@ -1,8 +1,5 @@
 #include <raylib.h>
-#include <stdio.h>
 #include <math.h>
-#include <stdlib.h>
-#include <time.h>
 
 #ifdef TEAPOT
 #include "assets/utahTeapot.c"
@@ -68,7 +65,6 @@ void draw_line(Vector2 p1, Vector2 p2)
 
 int main(void)
 {
-    srand(time(0));
     const int screen_width  = 800;
     const int screen_height = 800;
     float dz = 4;
@@ -81,9 +77,9 @@ int main(void)
         DrawText(TextFormat("CURRENT FPS: %i", (int)(1.0f/GetFrameTime())), GetScreenWidth() - 220, 40, 20, GetColor(FOREGROUND));
         ClearBackground(GetColor(BACKGROUND));
         angle += PI*GetFrameTime();
-        for(int i = 0; i < ARRAY_SIZE(faces); ++i)
+        for(long unsigned int i = 0; i < ARRAY_SIZE(faces); ++i)
         {
-            for(int j = 0; j < ARRAY_SIZE(faces[i]); j++) 
+            for(long unsigned int j = 0; j < ARRAY_SIZE(faces[i]); j++) 
             {
                 const Vector3 b = vertices[faces[i][1]];
                 const Vector3 a = vertices[faces[i][0]];
